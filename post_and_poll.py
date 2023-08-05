@@ -9,24 +9,24 @@ API_KEY = 'my_API_KEY'  # REPLACE WITH YOUR API KEY
 
 
 root_url = 'https://developer.nrel.gov/api/reopt'
-post_url = root_url + '/v1/job/?api_key=' + API_KEY
-results_url = root_url + '/v1/job/<run_uuid>/results/?api_key=' + API_KEY
+post_url = f'{root_url}/v1/job/?api_key={API_KEY}'
+results_url = f'{root_url}/v1/job/<run_uuid>/results/?api_key={API_KEY}'
 
 post = json.load(open('Scenario_POST.json'))
 
 resp = requests.post(post_url, json=post)
 
 if not resp.ok:
-    log.error("Status code {}. {}".format(resp.status_code, resp.content))
+    log.error(f"Status code {resp.status_code}. {resp.content}")
 else:
-    log.info("Response OK from {}.".format(post_url))
+    log.info(f"Response OK from {post_url}.")
 
     run_id_dict = ast.literal_eval(resp.content)
 
     try:
         run_id = run_id_dict['run_uuid']
     except KeyError:
-        msg = "Response from {} did not contain run_uuid.".format(post_url)
+        msg = f"Response from {post_url} did not contain run_uuid."
         log.error(msg)
         raise KeyError(msg)
 
@@ -35,4 +35,4 @@ else:
     with open(results_file, 'wb') as fp:
         json.dump(obj=results, fp=fp)
 
-    log.info("Saved results to {}".format(results_file))
+    log.info(f"Saved results to {results_file}")
